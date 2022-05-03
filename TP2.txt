@@ -1,0 +1,85 @@
+1. Trouver la section correspondant au redirection dans le manuel de bash, et répondez aux questions suivantes.
+	
+	
+	1.a Quels opérateurs de redirection permettent d’ouvrir un fichier en lecture ? en écriture ? les deux à la fois ?
+		
+		[n]>mot Ouverture en Écriture d'un descripteur de fichier
+		[n]>>mot Ouverture en Écriture d'un descripteur de fichier (ajoute)
+		[n]<mot Ouverture en Lecture d'un descripteur de fichier
+		[n]<>mot Ouverture en Lecture/Écriture d'un descripteur de fichier
+
+	1.b À quels modes d’ouverture de fichier correspondent les redirections <~/.bashrc,3<>/tmp/totoet>>/tmp/toto.log ? Quels fichiers sont ouverts ? Quels descripteurs de fichier sont définis ?
+
+		la redirection <~/.bashrc correspond à la redirection du contenu de .bashrc dans un fichier ouvert en lecture
+
+		la redirection 3<>/tmp/totoet>>/tmp/toto.log correspond à la redirection du contenu de totoet ouvert en écriture et en lecture et l'ajoute dans le fichier toto.log
+
+	1.c À quelles actions correspondent 2>&1, 3>&- et 3>&1 1>&2 2>&3 3>&-?
+
+		2>&1 : redirige la sortie d'erreur vers la sortie standard
+		3>&- : ferme la sortie du descripteur de fichier 3
+		3>&1 1>&2 2>&3 3>&- : redirige la sortie du descripteur de fichier 3 vers la sortie standard, puis la sortie standard vers la sortie d'erreur puis la sortie d'erreur vers le descripteur de fichier 3 et enfin ferme la sortie du descripteur de fichier 3
+
+2. Que fait le bloc de commande suivant ? En particulier, donnez ce qui est affiché sur la sortie standard et sur l’erreur standard.
+
+3. Écrivez le contenu de ce bloc dans un script bash manyfd.sh que vous rendrez exécutable (sans oublier d’ajouter le bon entête,c.f.TP1). Exécutez le.
+
+		echo '#!'`which bash` > manyfd.sh
+		echo '' >>manyfd.sh
+		echo 'echo "sortie␣de␣$USER"  >&1' >>manyfd.sh
+		echo 'echo "erreur␣de␣$USER"  >&2' >>manyfd.sh
+		echo 'echo "écriture␣de␣$USER"  >>/tmp/fichiercds' >>manyfd.sh
+		echo 'cat</tmp/fichiercds  >&2' >>manyfd.sh
+		
+4. Créez un tube qui envoie la sortie standard de ce script sur l’entrée standard de la commande grep à laquelle vous passerez l’argument "$USER". Que fait grep "$USER" ?
+
+		./manyfd.sh 2>/dev/null | grep "$USER"
+
+5. Modifiez la ligne de commande de la question précédente, en ajoutant des redirections avant le tube (|), afin que l’erreur standard soit envoyé à grep, et non la sortie standard.
+
+		./manyfd.sh 2>&1 1>/dev/null | grep "$USER"
+
+6. Pour chacun des cas donnés ci-dessous, complétez le bloc{redirections}de la commande suivante, afin que la sortie contiennent 2 les lignes attendues (faites attention aux permissions) :
+	ls -l --time-style=+ /proc/self/fd/ {redirections}
+
+	6.a ls -l --time-style=+ /proc/self/fd/ 0</tmp/toto
+	6.b ls -l --time-style=+ /proc/self/fd/ 0<>/tmp/toto
+	6.c ls -l --time-style=+ /proc/self/fd/ 2>/tmp/toto 0</tmp/toto 2>/tmp/toto
+	6.d ls -l --time-style=+ /proc/self/fd/ 3<>/tmp/toto 4</tmp/tata 5>/tmp/toto
+
+2 Appels systèmes
+
+7. Tracez l’exécution du script manyfd.sh de la question
+
+8. Trouvez l’option des trace qui permet de rediriger sa sortie (écrite par défaut sur l’erreur standard) vers un fichier. Testez (sur le script manyfd.sh).
+
+		strace -o
+
+9. Beaucoup d’appels système sont réalisés sur cet exemple très simple. Nous allons filtrer la sortie des trace, sur l’exécution de manyfd.sh. Regardez la section Filtrage dans le manuel des trace.
+
+	9.a Comment peut-on ne garder que les appels systèmes en rapport avec la gestion des processus (clone(fork),exec,exit) ? Y’a-t-il des processus clonés ?
+	
+		-e trace=%process
+
+	9.b Comment peut-on ne garder que les appels systèmes en rapport avec la manipulation de fichier (ouverture, écriture. . . ) ?
+
+		-e trace=%file
+
+	9.c Comment peut-on ne garder que les appels systèmes qui concernent l’ouverture de fichier. Quels fichiers sont ouverts en mode écriture ?
+
+		-e trace=open
+
+10. Les variables $$ et $BASHPID ne diffèrent pas toujours. Voyons :
+
+	10.a Affichez le contenu des variables $$ et $BASHPID. Que remarquez-vous ?
+		
+		$$ = 86152
+		$BASHPID = 86152
+
+	10.b Même question, mais exécuté dans un sous-shell.
+
+		$$ = 48592
+		$BASHPID = 48592
+
+	10.c Même question mais exécuté dans un bloc de commande (entre accolades).
+		

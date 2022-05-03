@@ -1,0 +1,75 @@
+	1. La commandetree(non intégrée,i.e., non-builtin, àbash) permet de représenterune arborescence dans le système de fichiers à l’aide d’indentation (c.f.énoncéde2).
+
+	1.a Essayez-la (de préférences sur des petites sous-arborescences).
+		tree Téléchargements
+	1.b Trouvez et testez l’option qui permet de n’afficher que les répertoires.
+		tree -d
+	1.c Trouvez et testez l’option qui permet d’afficher les fichiers cachés.
+		tree -a
+	1.d Trouvez et testez l’option qui permet de suivre les liens symboliques.
+		tree -l
+	1.e Trouvez et testez l’option qui permet d’ordonner chaque répertoires par date de dernière modification (plus récent d’abord).
+		tree -t
+
+	2. À l’aide des commandes touch et mkdir, créez l’arborescence suivante (lesfeuillessont des fichiers réguliers vides) :
+
+	3. 3.a Créez un lien symbolique relatif 1 vers le répertoire du TP1 dans le répertoire des évaluation, que vous nommereztp-noté-1. Testez le lien.
+		ln -s ../../evaluation os/tp/1/tp-noté-1
+
+	3.b Créez un lien physique vers le fichier notes dans le répertoireos/tp/1.
+		ln os/evaluation/notes os/tp/1/LienPhysique
+
+	3.c Supprimez le fichier notes du répertoire evaluation.
+		rm os/evaluation/notes
+	
+	3.d Supprimez le répertoire evaluation.
+		rm -r os/evaluation/
+	
+	3.e Supprimez le répertoire tp et son contenu (mais gardez le reste de l’arbores-cence pour des questions futures).
+		rm -r os/tp
+
+	4. Expliquez ce que fait la commande suivante :find /home/ -typef -name "*.txt" -print 2>/dev/null | head  -16 
+En particulier,
+
+	4.a pourquoi a-t-on écrit2>/dev/null?
+		Pour rediriger le flux de sortie stderr vers la sortie dev/null
+
+	4.b à quoi sert le tube|head-16?
+
+	4.c que faut il modifier pour qu’un fichier~/file.TXTsoit également affiché (c’està dire, que les noms soient filtrés indépendamment de la casse) ?
+
+	5. Rendez le répertoire os et son contenu accessible à la lecture pour tous, mais accessible à l’écriture seulement pour vous-même. Faites en sorte que tous les utilisateurs puissent traverser le répertoire et ses répertoires parents. Tester en listant le contenu du répertoire de votre voisin (depuis votre session personnelle).
+
+	6. Les bitssetuid,setgidetsticky(collant) permettent un contrôle plus fin des permissions.
+	sur un fichier :setuid(resp.setgid) indique que l’exécution du fichier doit sefaire en tant qu’utilisateur (resp.groupe) propriétaire du fichier.2
+
+	sur un répertoire :setgidindique que tous les répertoires et fichiers créés à l’in-térieur du répertoire ont, par défaut, le même groupe propriétaire que lerépertoire. Lestickybit, quant à lui, indique que seul le propriétaire d’unfichier peut le supprimer (par défaut, le droit d’écriture dans un répertoireregroupe le droit de création et de suppression),e.g.,/tmp/.3On paramètre ces droits grâce à la commandechmod.
+
+	6.a Observez la valeurs du bitstickysur le répertoire/tmp.
+		ls -l /
+		stat /tmp
+
+	6.b Donnez le droit d’écriture avec le bit sticky au répertoireos. Vérifiez que vous pouvez créer un fichier dans le répertoire de votre voisin. Vérifiez que vous ne pouvez pas supprimer les fichiers qui ne vous appartiennent pas.
+		chmod --recursive 1755 os
+
+Un script shell est un programme qui peut être interprété par un interpréteur shell.On écrit les scripts shell dans un fichier texte, dont la première ligne d’entête indiquel’interpréteur shell à utiliser :#!<chemin de l’interpréteur>.
+
+	7. Que fait la commande which? Utilisez la pour trouver le chemin absolu de l’exé-cutable BASH.
+		montre le chemin complet d'un shell.
+		/usr/bin/bash
+
+	8. Dans le terminal, affichez en une ligne l’entête d’un script bash, qui consiste en la chaine de caractère #! 4suivi du chemin de l’interpréteur bash(donné par la com-mandewhich,c.f.question précédente). On utilisera la substitution de commande(c.f.,Command substitution dans le manuel de bash) pour que la ligne donne le bon entête quelque soit l’installation du système (et en particulier le chemin del’exécutable bash, d’où l’utilisation de la commande which).
+		echo '#!'`which bash`
+
+	9. En utilisant une redirection, écrivez cette ligne dans un nouveau fichier header.sh.
+		echo '#!' `which bash` > header.sh
+
+	10. Toujours depuis le terminal, ajoutez votre commande complète de la question 8 au fichier header.sh(qui contiendra ainsi deux lignes) et changez les permissions dece dernier pour pouvoir le rendre exécutable. Testez le (le script doit donc afficher la ligne de la question 8).
+		
+
+
+
+
+
+
+		
